@@ -43,22 +43,23 @@ end
 sshd_config = '/etc/ssh/sshd_config'
 
 # changes to make to the config file
-seds = [
-  's/^#PasswordAuthentication yes/PasswordAuthentication no/g',
-  's/^X11Forwarding yes/X11Forwarding no/g',
-  's/^UsePAM yes/UsePAM no/g'
-]
+# These are default in 14.04
+# seds = [
+#   's/^#PasswordAuthentication yes/PasswordAuthentication no/g',
+#   's/^X11Forwarding yes/X11Forwarding no/g',
+#   's/^UsePAM yes/UsePAM no/g'
+# ]
 
-bash 'ssh hardening' do
-  user 'root'
-  code <<-EOC
-    #{seds.map { |rx| "sed -i '#{rx}' #{sshd_config}" }.join("\n")}
-  EOC
-end
-
-# service 'ssh' do
-#   action :restart
+# bash 'ssh hardening' do
+#   user 'root'
+#   code <<-EOC
+#     #{seds.map { |rx| "sed -i '#{rx}' #{sshd_config}" }.join("\n")}
+#   EOC
 # end
+
+service 'ssh' do
+  action :restart
+end
 
 # now allow SSH traffic through the firewall and restart SSH
 # unless otherwise specified, block everything
